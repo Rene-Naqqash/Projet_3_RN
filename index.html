@@ -12,15 +12,26 @@
     <meta name="description" content="" />
     <link rel="stylesheet" href="./assets/style.css" />
   </head>
+
   <body>
     <header>
-      <h1>Sophie Bluel <span>Architecte d'intérieur</span></h1>
+      <a href="index.html">
+        <h1>Sophie Bluel <span>Architecte d'intérieur</span></h1>
+      </a>
       <nav>
         <ul>
-          <li>projets</li>
-          <li>contact</li>
-          <li>login</li>
-          <li><img src="./assets/icons/instagram.png" alt="Instagram" /></li>
+          <a href="#">
+            <li>projets</li>
+          </a>
+          <a href="#">
+            <li>contact</li>
+          </a>
+          <a href="login.html">
+            <li>login</li>
+          </a>
+          <a href="#">
+            <li><img src="./assets/icons/instagram.png" alt="Instagram" /></li>
+          </a>
         </ul>
       </nav>
     </header>
@@ -50,6 +61,28 @@
       </section>
       <section id="portfolio">
         <h2>Mes Projets</h2>
+        <div class="filters">
+          <a href="#">
+            <div>
+              <h3 id="tous">Tous</h3>
+            </div>
+          </a>
+          <a href="#">
+            <div>
+              <h3 id="objets">Objets</h3>
+            </div>
+          </a>
+          <a href="#">
+            <div>
+              <h3>Appartement</h3>
+            </div>
+          </a>
+          <a href="#">
+            <div>
+              <h3>Hotels & restaurants</h3>
+            </div>
+          </a>
+        </div>
         <div class="gallery">
           <figure>
             <img src="assets/images/abajour-tahina.png" alt="Abajour Tahina" />
