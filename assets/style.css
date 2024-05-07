@@ -302,7 +302,7 @@ nav img {
 }
 
 /* Filters Section */
-.filters {
+#filters {
   margin-bottom: 50px;
   display: flex;
   justify-content: center;
@@ -311,7 +311,9 @@ nav img {
   gap: 15px 0;
 }
 
-.filters a {
+#filters a {
+  text-align: center;
+
   border: solid #1d6154 1px;
   border-radius: 25px;
   margin: 0 10px 0 0;
@@ -319,23 +321,16 @@ nav img {
   font-family: 'Syne', sans-serif;
 }
 
-.filters a:hover {
+#filters a:hover {
   color: white;
   background-color: #1d6154;
 }
 
-.filters h3 {
+#filters h3 {
   padding: 8px 10px;
+  min-width: 100px;
   font-size: 16px;
   font-weight: 700;
-}
-
-#tous {
-  padding: 8px 20px;
-}
-
-#objets {
-  padding: 8px 16px;
 }
 
 /* ****************   CSS Login Page      **************** */
