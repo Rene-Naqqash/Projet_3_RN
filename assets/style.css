@@ -313,7 +313,7 @@ nav img {
 
 #filters a {
   text-align: center;
-
+  cursor: pointer;
   border: solid #1d6154 1px;
   border-radius: 25px;
   margin: 0 10px 0 0;
@@ -321,7 +321,8 @@ nav img {
   font-family: 'Syne', sans-serif;
 }
 
-#filters a:hover {
+#filters a:hover,
+#filters a.active {
   color: white;
   background-color: #1d6154;
 }
@@ -342,9 +343,11 @@ nav img {
   align-items: center;
   justify-content: center;
 }
+
 #login-title {
   margin-top: 110px;
 }
+
 #login-form-container {
   margin-top: 35spx;
   width: 380px;
@@ -380,10 +383,16 @@ nav img {
   padding: 7px 45px;
   border: none;
 }
+
+#submit-btn:hover {
+  cursor: pointer;
+}
+
 /* Login page Mot de passe oublié a,p*/
 #forgote-password-loginPage {
   margin-top: 25px;
 }
+
 #forgote-password-loginPage p {
   display: inline-block;
   text-decoration: underline;

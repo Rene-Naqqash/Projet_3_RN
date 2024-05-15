@@ -55,6 +55,7 @@ function getCategories() {
 function insertCategories(data) {
   filters.innerHTML = '';
   let a = document.createElement('a');
+  a.classList = 'active';
   let h3 = document.createElement('h3');
   h3.id = 'tous';
   h3.innerText = 'Tous';
@@ -73,15 +74,24 @@ function insertCategories(data) {
     new_a.appendChild(new_h3);
     new_a.addEventListener('click', function (e) {
       console.log(e);
-
+      let categoryName = category.name;
       let result = works.filter((work) => {
-        // j'ai pas encore finis ::::::
-        // e.target.nodeValue ==
+        return work.category.name === categoryName;
       });
       insertWork(result);
     });
     filters.appendChild(new_a);
   });
 }
-getWorks();
-getCategories();
+
+function main() {
+  let token = localStorage.getItem('token');
+  if (token) {
+    console.log('utilisateur connecté');
+    getWorks();
+  } else {
+    getWorks();
+    getCategories();
+  }
+}
+main();
