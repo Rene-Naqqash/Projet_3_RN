@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (response.ok) {
         localStorage.setItem('token', data.token);
 
-        window.location.href = '/index.html';
+        window.location.href = '/Projet_3_RN/index.html';
       } else {
         // alert(data.message);
       }
