@@ -348,6 +348,10 @@ nav img {
   margin-top: 110px;
 }
 
+#errorMessage {
+  margin-top: 12px;
+}
+
 #login-form-container {
   margin-top: 35spx;
   width: 380px;
@@ -386,6 +390,8 @@ nav img {
 
 #submit-btn:hover {
   cursor: pointer;
+  background-color: #236b5e;
+
 }
 
 /* Login page Mot de passe oublié a,p*/

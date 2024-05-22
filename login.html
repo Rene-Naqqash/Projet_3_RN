@@ -38,11 +38,14 @@
     </header>
     <section id="login-section">
       <h2 id="login-title">Log In</h2>
+      
       <form id="login-form-container" action="">
         <label for="email">E-mail</label>
         <input type="email" name="email" id="userEmail" required />
         <label for="password">Mot de passe</label>
         <input type="password" name="password" id="userPassword" required />
+        <!-- pour afficher mon message d'erreur -->
+        <p id="errorMessage"></p> 
         <button type="submit" id="submit-btn">Se connecter</button>
       </form>
 
