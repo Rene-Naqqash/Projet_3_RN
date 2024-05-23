@@ -100,11 +100,18 @@ function insertCategories(data) {
     });
   });
 }
+function loggedIn () {
+  let newEditSection = document.createElement('section');
+  newEditSection.classList.add('editSection');
+  newEditSection.innerHTML='<a href="#"><i class="fa-regular fa-pen-to-square"></i></a> <a href="#"><p>Mode édition</p></a>';
+  document.body.insertBefore(newEditSection, document.body.firstChild);
+}
 
 function main() {
   let token = localStorage.getItem('token');
   if (token) {
     console.log('Utilisateur Connecté');
+    loggedIn();
     getWorks();
   } else {
     getWorks();
