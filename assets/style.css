@@ -393,8 +393,7 @@ nav img {
 
 #submit-btn:hover {
   cursor: pointer;
-  background-color: #0E2F28
-
+  background-color: #0e2f28;
 }
 
 /* Login page Mot de passe oublié a,p*/
@@ -408,7 +407,7 @@ nav img {
 }
 
 /******* Mode Edition  ******/
-.editSection{
+.editSection {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -419,16 +418,55 @@ nav img {
   left: 50%; /* Move the section to the center of the viewport */
   right: 50%;
   margin-left: -50vw; /* Offset by half the viewport width to extend full width */
-  margin-right: -50vw; 
+  margin-right: -50vw;
   box-sizing: border-box;
-
 }
 .editSection a {
-  
-  color: #FFFFFF;
+  color: #ffffff;
   font-size: 1.1rem;
-  padding:calc(40px - 17px) 0;
+  padding: calc(40px - 17px) 0;
 }
-.editSection a i{
+.editSection a i {
   margin-right: 10px;
+}
+
+/***** Bouton et text Mode édition à droite de Mes Projets *****/
+.edit-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.right-children {
+  display: flex;
+  align-items: center;
+  position: absolute;
+  left: calc(
+    50% + 125px
+  ); /* Adjust the value (en px) based on the width of the centered child */
+  bottom: 35px;
+}
+
+.third-child {
+  padding-left: 8px;
+}
+
+/****** Ma modal ******/
+
+.modal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+}
+.modal-wrapper {
+  background-color: #ffffff;
+  width: 630px;
+  height: 688px;
 }
