@@ -292,7 +292,7 @@ footer nav ul {
   margin: 2em;
 }
 
-/* ******* my own css ******** */
+/************************** my own css ***************************/
 /* Global */
 a {
   color: inherit;
@@ -406,7 +406,7 @@ nav img {
   text-decoration: underline;
 }
 
-/******* Mode Edition  ******/
+/************************* Mode Edition  ************************/
 .editSection {
   display: flex;
   justify-content: center;
@@ -452,7 +452,7 @@ nav img {
   padding-left: 8px;
 }
 
-/****** Ma modal ******/
+/****************** Ma modal ******************/
 
 .modal {
   display: flex;
@@ -463,10 +463,92 @@ nav img {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
 }
 .modal-wrapper {
   background-color: #ffffff;
   width: 630px;
   height: 688px;
+  position: relative;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#btn-close-modal {
+  font-size: 0;
+  position: absolute;
+  top: 3%;
+  left: 90%;
+  width: 19px;
+  height: 19px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+#btn-close-modal::before,
+#btn-close-modal::after {
+  content: '';
+  position: absolute;
+  width: 2px;
+  height: 100%;
+  background-color: black;
+}
+/* lignes pour former un "X" */
+#btn-close-modal::before {
+  transform: rotate(45deg);
+}
+#btn-close-modal::after {
+  transform: rotate(-45deg);
+}
+
+/* p modal */
+.modal-wrapper p {
+  margin-top: 50px;
+  margin-bottom: 20px;
+  font-size: 1.6rem;
+  font-weight: 500;
+  box-sizing: border-box;
+}
+
+.modal-div-flex {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.gallery-modal {
+  /* margin-top: 20px; */
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  gap: 10px;
+  margin: 30px 105px 20px;
+  padding-bottom: 90px;
+  box-sizing: border-box;
+  border-bottom: solid #b3b3b3 1px;
+}
+
+.gallery-modal img {
+  width: 100%;
+}
+
+/* btn ajouter une photo */
+#btn-ajouter {
+  margin: 30px 0 20px;
+  background-color: #1d6154;
+  color: white;
+  font-size: 700;
+  font-family: 'Syne';
+  border-radius: 25px;
+  padding: 7px 45px;
+  border: none;
+}
+
+#btn-ajouter:hover {
+  cursor: pointer;
+  background-color: #0e2f28;
 }

@@ -97,6 +97,7 @@ function insertCategories(data) {
     });
   });
 }
+
 function loggedIn() {
   // c'est pour creer la bar noir en haut de la page
   let newEditSection = document.createElement('section');
@@ -113,9 +114,6 @@ function loggedIn() {
     ' <a href="#modal" class="second-child js-modal"> <i class="fa-regular fa-pen-to-square"></i></a> <a href="#modal" class="third-child js-modal">modifier</a>';
   divModifier.appendChild(divRightChildren);
 
-  // Executer la fonction openModal
-  openModal();
-
   // target login <li> et changer son text
   let liLogin = document.querySelector('#li-login');
   liLogin.innerText = 'logout';
@@ -127,6 +125,10 @@ function loggedIn() {
   liLogin.addEventListener('click', function () {
     logout();
   });
+
+  // Executer la fonction openModal
+  openModal();
+  worksModal();
 }
 
 // la fonction qui permet d'ouvrir la modal
@@ -188,6 +190,25 @@ function openModal() {
   });
 }
 
+// fonction pour generer les travaux dans la modal
+function worksModal() {
+  console.log(works);
+  let displayWorksModal = document.querySelector('.gallery-modal');
+  works.forEach((work) => {
+    // creation des elements html
+    let newdiv = document.createElement('div');
+    let addImage = document.createElement('img');
+    // affectation de valeurs pour les elements créé
+    newdiv.setAttribute('category', work.category.name);
+    newdiv.setAttribute('work', work.id);
+    addImage.src = work.imageUrl;
+    // on ajoute l'image  notre balise div
+    newdiv.appendChild(addImage);
+    // puis on ajoute notre div dans notre displayWorksModal
+    displayWorksModal.appendChild(newdiv);
+  });
+}
+
 function logout() {
   let loginLogout = document.querySelector('#li-login');
   if (loginLogout.innerText === 'logout') {
@@ -200,8 +221,8 @@ function main() {
   let token = localStorage.getItem('token');
   if (token) {
     console.log('Utilisateur Connecté');
-    loggedIn();
     getWorks();
+    setTimeout(loggedIn, 140); // j'etais oubligé de mettre un setTimeout pck le works il chargait pas directement...
   } else {
     getWorks();
     getCategories();
