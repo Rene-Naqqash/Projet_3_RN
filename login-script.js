@@ -21,31 +21,32 @@ document.addEventListener('DOMContentLoaded', () => {
       if (response.ok) {
         localStorage.setItem('token', data.token);
         window.location.href = '/Projet_3_RN/index.html';
-      } 
-      else {
+      } else {
         switch (response.status) {
           case 401:
-            displayError('Email ou mot de passe incorrect. Veuillez réessayer.');
+            displayError(
+              'Email ou mot de passe incorrect. Veuillez réessayer.'
+            );
             break;
-          case 404: 
-            displayError('Email ou mot de passe incorrect. Veuillez   réessayer.');
+          case 404:
+            displayError(
+              'Email ou mot de passe incorrect. Veuillez   réessayer.'
+            );
             break;
           default:
-            displayError('Une erreur est survenue. Veuillez réessayer plus tard.');
+            displayError(
+              'Une erreur est survenue. Veuillez réessayer plus tard.'
+            );
             break;
-
         }
-        
       }
     } catch (error) {
       // console.error('Error:', error);
     }
   });
 
-  function displayError (message){
+  function displayError(message) {
     let displayMessage = document.querySelector('#errorMessage');
     displayMessage.innerText = message;
   }
-    
 });
-

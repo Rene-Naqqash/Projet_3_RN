@@ -14,6 +14,12 @@ function getWorks() {
     .then((data) => {
       works = data;
       insertWork(works);
+      let token = localStorage.getItem('token');
+      if (token) {
+        loggedIn();
+      } else {
+        getCategories();
+      }
     })
     // ici c'est une méthode des promesses qui est appelée lorsque la promesse est rejetée. Elle prend une fonction comme argument, qui est exécutée en cas d'erreur. donc si les promesses précédents n'ont pas été résolus donc ils ont été rejeté et bien on va afficher le type d'erreur dans la console
     .catch((error) => {
@@ -103,8 +109,11 @@ function loggedIn() {
   let newEditSection = document.createElement('section');
   newEditSection.classList.add('editSection');
   newEditSection.innerHTML =
-    '<a href="#modal" class="js-modal"><i class="fa-regular fa-pen-to-square"></i></a> <a href="#modal" class="js-modal">Mode édition</a>';
+    '<a href="#modal" title="éditer" class="js-modal"><i class="fa-regular fa-pen-to-square"></i></a> <a href="#modal" class="js-modal">Mode édition</a>';
   document.body.insertBefore(newEditSection, document.body.firstChild);
+
+  // je rajoute une margin-top à mon header qui contient le titre et le nav-bar
+  document.querySelector('header').classList.add('header-top-margin');
 
   //  ici je creer le bouton de modifier à côté de 'Mes Projet'
   let divModifier = document.querySelector('.edit-container');
@@ -118,7 +127,6 @@ function loggedIn() {
   let liLogin = document.querySelector('#li-login');
   liLogin.innerText = 'logout';
 
-  // je vais mettre le code pour target le a tag et changer son href pour logout ou je vais mettre un ecouteur d'evenements pour apres executer une foction de logout qui supprimera le token du stockage local. je pense que la deuxieme facon est la best pour ce cas.
   let loginLink = document.querySelector('#a-login-logout');
   loginLink.href = '#';
   // pour le logout
@@ -137,10 +145,8 @@ function openModal() {
   let linksModal = document.querySelectorAll('.js-modal');
   linksModal.forEach((link) => {
     link.addEventListener('click', function (e) {
-      // console.log(e);
       e.preventDefault();
       let target = document.querySelector(e.target.getAttribute('href'));
-      // console.log(target);
       if (target != null) {
         target.style.display = null;
         target.removeAttribute('aria-hidden');
@@ -150,10 +156,8 @@ function openModal() {
         target.style.display = null;
         target.removeAttribute('aria-hidden');
         target.setAttribute('aria-modal', 'true');
-        // console.log(target);
       }
       modal = target;
-      // console.log(modal);
       modal.addEventListener('click', closeModal);
       modal
         .querySelector('.js-modal-btn-close')
@@ -164,7 +168,57 @@ function openModal() {
     });
   });
 
-  const closeModal = function (e) {
+  // j'ajoute un ecouteur d'evenement à mon btn "Ajouter une Photo"
+  let addPhotoButton = document.querySelector('#btn-add');
+  addPhotoButton.addEventListener('click', modalAddPhoto);
+  /* 
+  // la fonction pour ajouter des travaux par l'admin
+  */
+  function modalAddPhoto() {
+    // afficher la fleche de retour
+    let backArrow = document.querySelector('#btn-return-modal');
+    backArrow.style.visibility = 'visible';
+    backArrow.addEventListener('click', returnModalGallery);
+    // effacer mon innerHTML de ma div parent de gallery-modal
+    let parentGalleryModal = document.querySelector('.modal-div-flex');
+    parentGalleryModal.innerHTML = '';
+    parentGalleryModal.innerHTML = `<p class="title-modal">Ajout photo</p> <div class="div-add-photo"> <div> <i class="fa-solid fa-image fa-xl"></i> <button> + Ajouter photo <button> <p>jpg, png : 4mo max</p> </div> </div> <p class="error-message-add-photo" style="visibility: hidden">Erreur d'ajout</p> <button id="btn-valider">Valider<button>`;
+  }
+
+  function returnModalGallery() {
+    // cacher la fleche de retour
+    let backArrow = document.querySelector('#btn-return-modal');
+    backArrow.style.visibility = 'hidden';
+    // recreation de mon innerHTML dans ma div parent
+    let parentGalleryModal = document.querySelector('.modal-div-flex');
+    // SI la div est vide je remplit la div
+    if (parentGalleryModal && parentGalleryModal.innerHTML.trim() === '') {
+      parentGalleryModal.innerHTML =
+        '<p class="title-modal">Galerie photo</p><div class="gallery-modal"></div><p class="error-message-modal" style="visibility: hidden">Erreur suppression</p><button id="btn-add">Ajouter une photo</button>';
+      worksModal();
+    }
+    // sinon si y a déjà autre choses dans ma div et bien je nettois la div et je vais ajouter mon html de la gallery après le nettoyage
+    else {
+      // je declare ma div "gallery-modal"
+      let galleryModal = document.querySelector('.gallery-modal');
+      // si la div gallery-modal est presente ET elle est vide
+      if (galleryModal && galleryModal.innerHTML.trim() === '') {
+        worksModal();
+      }
+      // sinon je la vide et je la remplis du html voulu
+      else {
+        parentGalleryModal.innerHTML = '';
+        parentGalleryModal.innerHTML =
+          '<p class="title-modal">Galerie photo</p><div class="gallery-modal"></div><p class="error-message-modal" style="visibility: hidden">Erreur suppression</p><button id="btn-add">Ajouter une photo</button>';
+        worksModal();
+      }
+    }
+    // j'ajoute un ecouteur d'evenement à mon btn "Ajouter une Photo"
+    let addPhotoButton = document.querySelector('#btn-add');
+    addPhotoButton.addEventListener('click', modalAddPhoto);
+  }
+
+  function closeModal(e) {
     if (modal === null) return;
     e.preventDefault();
     modal.style.display = 'none';
@@ -178,37 +232,92 @@ function openModal() {
       .querySelector('.js-modal-stop')
       .removeEventListener('click', stopPropagation);
     modal = null;
-  };
+    // reinitialiser l'element de mon message erreur
+    let errorMessage = document.querySelector('.error-message-modal');
+    // j'ai mis un if car si je ferme la modal sur l'etap "ajout photo" et bien il y a un petit probleme car la div "gallery-modla" n'est pas dans le html et donc le errorMessage est automatiquement null et donc si je veux changer le style de mon errorMessage qui est NULL et bien le script il s'arrete car il y a une erreur. donc voila pourquoi j'ai mis un if
+    if (errorMessage != null) {
+      errorMessage.style.visibility = 'hidden';
+    }
+    console.log('returnModalGallery');
+    returnModalGallery();
+  }
   // pour bloquer la propagation qui vient de l'element parent qui est le aside "modal"
-  const stopPropagation = function (e) {
+  function stopPropagation(e) {
     e.stopPropagation();
-  };
+  }
   window.addEventListener('keydown', function (e) {
     if (e.key === 'Escape' || e.key === 'Esc') {
       closeModal(e);
     }
   });
 }
-
+/*
 // fonction pour generer les travaux dans la modal
+*/
 function worksModal() {
-  console.log(works);
   let displayWorksModal = document.querySelector('.gallery-modal');
   works.forEach((work) => {
     // creation des elements html
     let newdiv = document.createElement('div');
     let addImage = document.createElement('img');
+    let trashIcon = document.createElement('i');
     // affectation de valeurs pour les elements créé
     newdiv.setAttribute('category', work.category.name);
     newdiv.setAttribute('work', work.id);
+    newdiv.classList.add('img-div');
     addImage.src = work.imageUrl;
+    trashIcon.classList.add('fa-solid', 'fa-trash-can', 'fa-sm');
     // on ajoute l'image  notre balise div
     newdiv.appendChild(addImage);
+    newdiv.appendChild(trashIcon);
     // puis on ajoute notre div dans notre displayWorksModal
     displayWorksModal.appendChild(newdiv);
+
+    trashIcon.addEventListener('click', function (e) {
+      let itemToDelete = e.target.parentElement.attributes[1].value;
+      deleteWorks(itemToDelete);
+    });
   });
 }
+//
+function reInsertWorksModal() {
+  let displayWorksModal = document.querySelector('.gallery-modal');
+  displayWorksModal.innerHTML = '';
+  worksModal();
+}
 
+// la fonction qui est responsable de supprimer les travaux
+async function deleteWorks(workNumber) {
+  const token = localStorage.getItem('token');
+  try {
+    const response = await fetch(
+      `http://localhost:5678/api/works/${workNumber}`,
+      {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (response.ok) {
+      works = works.filter((work) => work.id !== parseInt(workNumber));
+      reInsertWorksModal();
+      insertWork(works);
+    } else {
+      let errorMessage = document.querySelector('.error-message-modal');
+      errorMessage.innerText = 'Erreur de suppression';
+      errorMessage.style.visibility = 'visible';
+    }
+  } catch (error) {
+    let errorMessage = document.querySelector('.error-message-modal');
+    errorMessage.innerText = 'Erreur de suppression';
+    errorMessage.style.visibility = 'visible';
+  }
+}
+
+// la fonction de logout qui supprime le token etc
 function logout() {
   let loginLogout = document.querySelector('#li-login');
   if (loginLogout.innerText === 'logout') {
@@ -218,14 +327,6 @@ function logout() {
 }
 
 function main() {
-  let token = localStorage.getItem('token');
-  if (token) {
-    console.log('Utilisateur Connecté');
-    getWorks();
-    setTimeout(loggedIn, 140); // j'etais oubligé de mettre un setTimeout pck le works il chargait pas directement...
-  } else {
-    getWorks();
-    getCategories();
-  }
+  getWorks();
 }
 main();
