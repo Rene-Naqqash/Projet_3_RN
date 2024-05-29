@@ -567,7 +567,9 @@ nav img {
   padding: 7px 45px;
   border: none;
 }
-
+#btn-valider {
+  padding: 7px 60px;
+}
 #btn-add:hover,
 #btn-valider:hover {
   cursor: pointer;
@@ -578,4 +580,19 @@ nav img {
 
 .div-add-photo {
   background-color: #e8f1f6;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 15px;
+  flex-direction: column;
+}
+#btnAjouterPhoto {
+  margin: 10px 0 20px;
+  background-color: #cbd6dc;
+  color: #306685;
+  font-size: 700;
+  font-family: 'Syne';
+  border-radius: 25px;
+  padding: 7px 10px;
+  border: none;
 }
