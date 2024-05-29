@@ -182,10 +182,10 @@ function openModal() {
     // effacer mon innerHTML de ma div parent de gallery-modal
     let parentGalleryModal = document.querySelector('.modal-div-flex');
     parentGalleryModal.innerHTML = '';
-    parentGalleryModal.innerHTML = `<p class="title-modal">Ajout photo</p> <div class="div-add-photo"> <i class="fa-solid fa-image fa-xl"></i> <button id="btnAjouterPhoto"> + Ajouter photo </button> <p>jpg, png : 4mo max</p> </div> 
+    parentGalleryModal.innerHTML = `<p class="title-modal">Ajout photo</p> <div class="div-add-photo"> <i class="fa-regular fa-image fa-5x"></i>  <button id="btnAjouterPhoto"> + Ajouter photo </button> <p>jpg, png : 4mo max</p> </div> 
     <div class="inputDiv">
     <p class="titleP">Titre</p>
-    <input type="text" id="title-work" name="title" required minlength="4" maxlength="8" size="10" />
+    <input type="text" id="title-work" name="title" required minlength="4"  size="10" />
     <p class="categoryP">Catégorie</p>
     <select name="category" id="category-selection">
       <option value="">--Sélectionnez une Catégorie--</option>

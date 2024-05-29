@@ -356,7 +356,7 @@ nav img {
 }
 
 #login-form-container {
-  margin-top: 35spx;
+  margin-top: 30px;
   width: 380px;
   display: flex;
   flex-direction: column;
@@ -579,20 +579,57 @@ nav img {
 /****************** Ma modal ajout photo ******************/
 
 .div-add-photo {
+  width: 420px;
   background-color: #e8f1f6;
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 15px;
   flex-direction: column;
+  box-sizing: border-box;
+}
+.div-add-photo p{
+  font-size:10px;
+  margin-bottom: 5px;
 }
 #btnAjouterPhoto {
-  margin: 10px 0 20px;
+  cursor:pointer;
+  margin: 8px 0 7px;
   background-color: #cbd6dc;
   color: #306685;
-  font-size: 700;
   font-family: 'Syne';
   border-radius: 25px;
   padding: 7px 10px;
   border: none;
+}
+
+.div-add-photo i
+{
+  padding: 5px;
+  margin: 5px;
+  color:#cbd6dc;
+}
+
+.inputDiv{
+  margin: 15px 0 0;
+  width: 420px;
+  
+}
+.inputDiv p{
+  margin: 16px 0;
+  font-size: 14px;
+  font-weight: 500;
+}
+#title-work,#category-selection { 
+  width: 100%;
+  height: 40px;
+  border: none;
+  outline: none;
+  padding-left: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+}
+
+.error-message-add-photo{
+  margin-top: 10px;
 }
