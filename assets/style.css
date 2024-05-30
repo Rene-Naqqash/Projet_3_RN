@@ -556,22 +556,21 @@ nav img {
 }
 
 /* btn ajouter une photo */
-#btn-add,
-#btn-valider {
+#btn-add
+{
   margin: 10px 0 20px;
   background-color: #1d6154;
   color: white;
-  font-size: 700;
+  font-weight: 700;
+  font-size: 13px;
   font-family: 'Syne';
   border-radius: 25px;
   padding: 7px 45px;
   border: none;
 }
-#btn-valider {
-  padding: 7px 60px;
-}
-#btn-add:hover,
-#btn-valider:hover {
+
+#btn-add:hover
+{
   cursor: pointer;
   background-color: #0e2f28;
 }
@@ -613,6 +612,8 @@ nav img {
 .inputDiv{
   margin: 15px 0 0;
   width: 420px;
+  padding-bottom: 50px;
+  border-bottom: 1px solid #b3b3b3;
   
 }
 .inputDiv p{
@@ -632,4 +633,21 @@ nav img {
 
 .error-message-add-photo{
   margin-top: 10px;
+}
+
+#btn-valider
+{
+  margin-top: 20px;
+  background-color:#A7A7A7;
+  padding: 7px 83.5px;
+  color: white;
+  font-weight: 700;
+  font-size: 13px;
+  font-family: 'Syne';
+  border-radius: 25px;
+  border: none;
+}
+#btn-valider:hover {
+  cursor: pointer;
+  background-color: #1d6154;
 }
