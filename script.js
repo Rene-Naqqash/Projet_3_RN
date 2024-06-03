@@ -3,7 +3,7 @@
 let gallery = document.querySelector('.gallery');
 let works;
 let categories;
-let filters = document.getElementById('filters');
+let filters = document.querySelector('#filters');
 
 //  je fais appel à l'api avec "fetch"
 function getWorks() {
@@ -182,17 +182,63 @@ function openModal() {
     // effacer mon innerHTML de ma div parent de gallery-modal
     let parentGalleryModal = document.querySelector('.modal-div-flex');
     parentGalleryModal.innerHTML = '';
-    parentGalleryModal.innerHTML = `<p class="title-modal">Ajout photo</p> <div class="div-add-photo"> <i class="fa-regular fa-image fa-5x"></i>  <button id="btnAjouterPhoto"> + Ajouter photo </button> <p>jpg, png : 4mo max</p> </div> 
+    parentGalleryModal.innerHTML = `<p class="title-modal">Ajout photo</p> <form class="form" id="form"><div class="div-add-photo"> <div id="div-preview"> </div> <div class="toRemove"> <i class="fa-regular fa-image fa-5x"></i> <button id="btnAjouterPhoto"> + Ajouter photo </button> <p>jpg, png : 4mo max</p></div> <input  id="file" type="file" name="file" style="display: none;"> </div> 
     <div class="inputDiv">
     <p class="titleP">Titre</p>
     <input type="text" id="title-work" name="title" required minlength="4"  size="10" />
     <p class="categoryP">Catégorie</p>
     <select name="category" id="category-selection">
-      <option value="">--Sélectionnez une Catégorie--</option>
+      <option >--Sélectionnez une Catégorie--</option>
       <option value="Objets">Objets</option>
       <option value="Appartements">Appartements</option>
       <option value="Hotels & restaurants">Hotels & restaurants</option>
-     </select> </div> <p class="error-message-add-photo" style="visibility: hidden">Erreur d'ajout</p> <button id="btn-valider">Valider</button>`;
+     </select> <p id="pEmpty"></p> <p id="error-message-add-photo" class="color-error" style="visibility: hidden">Erreur d'ajout</p> <button type="submit" id="btn-valider">Valider</button> </div> </form> `;
+
+    // <img id="file-preview" src="" alt="Image Preview" style="display: none;">
+
+    //  pour ajouter une img
+    let btnAjouter = document.querySelector('#btnAjouterPhoto');
+    btnAjouter.addEventListener('click', function (e) {
+      e.preventDefault();
+      document.querySelector('#file').click();
+    });
+    let fileInput = document.querySelector('#file');
+    fileInput.addEventListener('change', function (event) {
+      const file = event.target.files[0];
+      let maxSize = 4194304;
+      // pour vérifie la taille du fichier et si le type est bien en png ou en jpeg
+      if (
+        file &&
+        (file.size > maxSize ||
+          !(file.type === 'image/png' || file.type === 'image/jpeg')) //à tester
+      ) {
+        displayMessageError(
+          '#error-message-add-photo',
+          'Veuillez choisir une image (jpg, png) qui ne dépasse pas 4 Mo.'
+        );
+        return;
+      } else {
+        hideMessageError('#error-message-add-photo');
+      }
+      console.log(file);
+      if (file && (file.type === 'image/png' || file.type === 'image/jpeg')) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          let divPreview = document.querySelector('#div-preview');
+          let img = document.createElement('img');
+          img.setAttribute('id', 'file-preview');
+          img.setAttribute('alt', 'Image Preview');
+          img.src = e.target.result;
+          divPreview.innerHTML = '';
+          divPreview.appendChild(img);
+          let toRemove = document.querySelector('.toRemove');
+          if (toRemove) {
+            toRemove.remove();
+          }
+        };
+        reader.readAsDataURL(file);
+      }
+    });
   }
 
   function returnModalGallery() {
@@ -301,7 +347,7 @@ async function deleteWorks(workNumber) {
   const token = localStorage.getItem('token');
   try {
     const response = await fetch(
-      `http://localhost:5678/api/works/${workNumber}`,
+      `http://localhost:5678/api/wWorks/${workNumber}`,
       {
         method: 'DELETE',
         headers: {
@@ -334,6 +380,19 @@ function logout() {
     localStorage.removeItem('token');
     window.location.href = '/Projet_3_RN/index.html';
   }
+}
+
+// pour afficher le message d'erreur
+function displayMessageError(querySelector, message) {
+  let myElement = document.querySelector(querySelector);
+  myElement.innerHTML = message;
+  myElement.style.visibility = 'visible';
+}
+// pour cacher le message d'erreur
+function hideMessageError(querySelector) {
+  let myElement = document.querySelector(querySelector);
+  myElement.innerHTML = '';
+  myElement.style.visibility = 'hidden';
 }
 
 function main() {

@@ -1,11 +1,11 @@
-document.addEventListener('DOMContentLoaded', () => {
-  const loginForm = document.getElementById('login-form-container');
+document.addEventListener('DOMContentLoaded', function () {
+  const loginForm = document.querySelector('#login-form-container');
 
   loginForm.addEventListener('submit', async (event) => {
     event.preventDefault();
 
-    const email = document.getElementById('userEmail').value;
-    const password = document.getElementById('userPassword').value;
+    const email = document.querySelector('#userEmail').value;
+    const password = document.querySelector('#userPassword').value;
 
     try {
       const response = await fetch('http://localhost:5678/api/users/login', {
@@ -41,12 +41,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
     } catch (error) {
-      // console.error('Error:', error);
+      displayError();
     }
   });
 
   function displayError(message) {
     let displayMessage = document.querySelector('#errorMessage');
     displayMessage.innerText = message;
+    displayMessage.style.visibility = 'visible';
   }
 });
