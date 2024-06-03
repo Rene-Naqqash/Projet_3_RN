@@ -203,9 +203,11 @@ function openModal() {
             optionSelect(category.id, category.name);
           });
         });
+      // function pour creer chaque option pour la balise select
       function optionSelect(categoryId, categoryName) {
         let optionElement = document.createElement('option');
         optionElement.value = categoryId;
+        optionElement.setAttribute('name', `option-${categoryId}`);
         optionElement.textContent = categoryName;
         chooseCategoryParent.appendChild(optionElement);
       }
@@ -254,6 +256,21 @@ function openModal() {
         reader.readAsDataURL(file);
       }
     });
+
+    let formSubmit = document.querySelector('#form');
+    formSubmit.addEventListener('submit', handleForm);
+    function handleForm(e) {
+      e.preventDefault();
+      let myForm = e.target;
+      let fd = new FormData(myForm);
+      let file = fileInput.files[0];
+      console.log(file);
+      console.log(fd);
+      // Log each key-value pair in the FormData
+      for (let [key, value] of fd.entries()) {
+        console.log(`${key}: ${value}`);
+      }
+    }
   }
 
   function returnModalGallery() {
