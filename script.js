@@ -347,7 +347,7 @@ async function deleteWorks(workNumber) {
   const token = localStorage.getItem('token');
   try {
     const response = await fetch(
-      `http://localhost:5678/api/wWorks/${workNumber}`,
+      `http://localhost:5678/api/works/${workNumber}`,
       {
         method: 'DELETE',
         headers: {
