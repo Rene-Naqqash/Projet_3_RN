@@ -22,8 +22,8 @@ function getWorks() {
       }
     })
     // ici c'est une méthode des promesses qui est appelée lorsque la promesse est rejetée. Elle prend une fonction comme argument, qui est exécutée en cas d'erreur. donc si les promesses précédents n'ont pas été résolus donc ils ont été rejeté et bien on va afficher le type d'erreur dans la console
-    .catch((error) => {
-      console.log(error);
+    .catch(() => {
+      console.log('error');
     });
 }
 
@@ -56,11 +56,10 @@ function getCategories() {
     .then((response) => response.json())
     .then((data) => {
       categories = data;
-
       insertCategories(categories);
     })
-    .catch((error) => {
-      console.log(error);
+    .catch(() => {
+      console.log('error');
     });
 }
 
@@ -189,12 +188,29 @@ function openModal() {
     <p class="categoryP">Catégorie</p>
     <select name="category" id="category-selection">
       <option >--Sélectionnez une Catégorie--</option>
-      <option value="Objets">Objets</option>
-      <option value="Appartements">Appartements</option>
-      <option value="Hotels & restaurants">Hotels & restaurants</option>
      </select> <p id="pEmpty"></p> <p id="error-message-add-photo" class="color-error" style="visibility: hidden">Erreur d'ajout</p> <button type="submit" id="btn-valider">Valider</button> </div> </form> `;
-
-    // <img id="file-preview" src="" alt="Image Preview" style="display: none;">
+    // c'est function affiche l'option des category dynamiquement dans la modal d'ajout photo
+    function selectCategory() {
+      let categoriesToSelect;
+      let chooseCategoryParent = document.querySelector('#category-selection');
+      fetch('http://localhost:5678/api/categories')
+        .then((response) => response.json())
+        .then((data) => {
+          categoriesToSelect = data;
+        })
+        .then(() => {
+          categoriesToSelect.forEach((category) => {
+            optionSelect(category.id, category.name);
+          });
+        });
+      function optionSelect(categoryId, categoryName) {
+        let optionElement = document.createElement('option');
+        optionElement.value = categoryId;
+        optionElement.textContent = categoryName;
+        chooseCategoryParent.appendChild(optionElement);
+      }
+    }
+    selectCategory();
 
     //  pour ajouter une img
     let btnAjouter = document.querySelector('#btnAjouterPhoto');
@@ -220,7 +236,6 @@ function openModal() {
       } else {
         hideMessageError('#error-message-add-photo');
       }
-      console.log(file);
       if (file && (file.type === 'image/png' || file.type === 'image/jpeg')) {
         const reader = new FileReader();
         reader.onload = function (e) {
@@ -294,7 +309,6 @@ function openModal() {
     if (errorMessage != null) {
       errorMessage.style.visibility = 'hidden';
     }
-    console.log('returnModalGallery');
     returnModalGallery();
   }
   // pour bloquer la propagation qui vient de l'element parent qui est le aside "modal"
