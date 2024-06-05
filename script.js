@@ -3,6 +3,7 @@
 let gallery = document.querySelector('.gallery');
 let works;
 let categories;
+let newWorks;
 let filters = document.querySelector('#filters');
 
 //  je fais appel à l'api avec "fetch"
@@ -23,7 +24,7 @@ function getWorks() {
     })
     // ici c'est une méthode des promesses qui est appelée lorsque la promesse est rejetée. Elle prend une fonction comme argument, qui est exécutée en cas d'erreur. donc si les promesses précédents n'ont pas été résolus donc ils ont été rejeté et bien on va afficher le type d'erreur dans la console
     .catch(() => {
-      console.log('error');
+      console.log('Erreur de connexion');
     });
 }
 
@@ -39,7 +40,7 @@ function insertWork(data) {
     let addFigureCaption = document.createElement('figcaption');
     // affectation de valeurs pour les elements créé
     newFigure.setAttribute('category', work.category.name);
-    newFigure.setAttribute('work', work.id);
+    newFigure.setAttribute('id', `work-${work.id}`);
     addImage.src = work.imageUrl;
     addImage.alt = work.title;
     addFigureCaption.textContent = work.title;
@@ -181,18 +182,18 @@ function openModal() {
     // effacer mon innerHTML de ma div parent de gallery-modal
     let parentGalleryModal = document.querySelector('.modal-div-flex');
     parentGalleryModal.innerHTML = '';
-    parentGalleryModal.innerHTML = `<p class="title-modal">Ajout photo</p> <form class="form" id="form"><div class="div-add-photo"> <div id="div-preview"> </div> <div class="toRemove"> <i class="fa-regular fa-image fa-5x"></i> <button id="btnAjouterPhoto"> + Ajouter photo </button> <p>jpg, png : 4mo max</p></div> <input  id="file" type="file" name="file" style="display: none;"> </div> 
+    parentGalleryModal.innerHTML = `<p class="title-modal">Ajout photo</p> <form class="form" id="form"><div class="div-add-photo"> <div id="div-preview"> </div> <div class="toRemove"> <i class="fa-regular fa-image fa-5x"></i> <button id="btnAjouterPhoto"> + Ajouter photo </button> <p>jpg, png : 4mo max</p></div> <input  id="file" type="file"  style="display: none;"> </div> 
     <div class="inputDiv">
     <p class="titleP">Titre</p>
     <input type="text" id="title-work" name="title" required minlength="4"  size="10" />
     <p class="categoryP">Catégorie</p>
     <select name="category" id="category-selection">
-      <option >--Sélectionnez une Catégorie--</option>
+      <option value="0" >--Sélectionnez une Catégorie--</option>
      </select> <p id="pEmpty"></p> <p id="error-message-add-photo" class="color-error" style="visibility: hidden">Erreur d'ajout</p> <button type="submit" id="btn-valider">Valider</button> </div> </form> `;
     // c'est function affiche l'option des category dynamiquement dans la modal d'ajout photo
+    let chooseCategoryParent = document.querySelector('#category-selection');
     function selectCategory() {
       let categoriesToSelect;
-      let chooseCategoryParent = document.querySelector('#category-selection');
       fetch('http://localhost:5678/api/categories')
         .then((response) => response.json())
         .then((data) => {
@@ -261,14 +262,92 @@ function openModal() {
     formSubmit.addEventListener('submit', handleForm);
     function handleForm(e) {
       e.preventDefault();
-      let myForm = e.target;
-      let fd = new FormData(myForm);
+
+      let myFormData = new FormData(formSubmit);
       let file = fileInput.files[0];
-      console.log(file);
-      console.log(fd);
-      // Log each key-value pair in the FormData
-      for (let [key, value] of fd.entries()) {
-        console.log(`${key}: ${value}`);
+      myFormData.append('image', file);
+
+      const token = localStorage.getItem('token');
+      fetch('http://localhost:5678/api/works', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+        body: myFormData,
+      })
+        .then((response) => {
+          if (response.ok) {
+            document
+              .querySelector('#error-message-add-photo')
+              .classList.add('color-success');
+            displayMessageError(
+              '#error-message-add-photo',
+              'Travail a été ajouté avec succès.'
+            );
+            setTimeout(() => {
+              hideMessageError('#error-message-add-photo');
+            }, 3500);
+            newWorksDisplay();
+            // pour fermer la modla une fois que le travail a ete rajouter
+            // document.querySelector('.js-modal-btn-close').click();
+          } else {
+            const errorMessageAddPhoto = document.querySelector(
+              '#error-message-add-photo'
+            );
+            if (
+              errorMessageAddPhoto &&
+              errorMessageAddPhoto.classList.contains('color-success')
+            ) {
+              errorMessageAddPhoto.classList.remove('color-success');
+            }
+            displayMessageError(
+              '#error-message-add-photo',
+              "une erreur d'ajout s'est produit."
+            );
+          }
+        })
+        .catch((error) => {
+          const errorMessageAddPhoto = document.querySelector(
+            '#error-message-add-photo'
+          );
+          if (
+            errorMessageAddPhoto &&
+            errorMessageAddPhoto.classList.contains('color-success')
+          ) {
+            errorMessageAddPhoto.classList.remove('color-success');
+          }
+          displayMessageError(
+            '#error-message-add-photo',
+            'nous rencontrons une erreur de connexion'
+          );
+        });
+    }
+    // pour verifier les validité des inputs de la form et puis changer la couleur de mon button
+    let submitButton = document.querySelector('#btn-valider');
+    // je desactive le submit pour verifier les conditions puis je vais l'activer si tout est bon
+    submitButton.disabled = true;
+
+    chooseCategoryParent.addEventListener('change', checkFormValidity);
+    document
+      .querySelector('#title-work')
+      .addEventListener('input', checkFormValidity);
+    fileInput.addEventListener('change', checkFormValidity);
+
+    // fonction verif
+    function checkFormValidity() {
+      let categoryValue = chooseCategoryParent.value;
+      let titleValue = document.querySelector('#title-work').value;
+      let file = fileInput.files[0];
+
+      // si ces conditions son bons je vais pouvoir activer mon bouton submit
+      let isValid = categoryValue !== '0' && titleValue.trim() !== '' && file;
+
+      // activer ou désactiver le bouton submit en fonction de la validité
+      submitButton.disabled = !isValid;
+
+      // pour changer la couleur de mon btn submit en vert si les conditions sont validé
+      if (isValid) {
+        submitButton.classList.add('active');
+      } else {
+        submitButton.classList.remove('active');
       }
     }
   }
@@ -283,6 +362,7 @@ function openModal() {
     if (parentGalleryModal && parentGalleryModal.innerHTML.trim() === '') {
       parentGalleryModal.innerHTML =
         '<p class="title-modal">Galerie photo</p><div class="gallery-modal"></div><p class="error-message-modal" style="visibility: hidden">Erreur suppression</p><button id="btn-add">Ajouter une photo</button>';
+
       worksModal();
     }
     // sinon si y a déjà autre choses dans ma div et bien je nettois la div et je vais ajouter mon html de la gallery après le nettoyage
@@ -298,6 +378,7 @@ function openModal() {
         parentGalleryModal.innerHTML = '';
         parentGalleryModal.innerHTML =
           '<p class="title-modal">Galerie photo</p><div class="gallery-modal"></div><p class="error-message-modal" style="visibility: hidden">Erreur suppression</p><button id="btn-add">Ajouter une photo</button>';
+
         worksModal();
       }
     }
@@ -338,33 +419,85 @@ function openModal() {
     }
   });
 }
+
+function newWorksDisplay() {
+  fetch('http://localhost:5678/api/works')
+    .then((response) => response.json())
+    .then((data) => {
+      newWorks = data;
+      insertWork(newWorks);
+    })
+    .then(() => {
+      findLatestFigure();
+    })
+    .catch(() => {
+      console.log('error new works');
+    });
+}
+
+function newWorksDisplayDelete() {
+  fetch('http://localhost:5678/api/works')
+    .then((response) => response.json())
+    .then((data) => {
+      newWorks = data;
+      insertWork(newWorks);
+    })
+    .catch(() => {
+      console.log('error new works');
+    });
+}
+
+// fonction pour trouver le tableau le plus recent
+function findLatestFigure() {
+  const figures = document.querySelectorAll('.gallery figure');
+  let largestId = 0;
+  figures.forEach((figure) => {
+    const id = parseInt(figure.getAttribute('id').split('-')[1]);
+    if (id > largestId) {
+      largestId = id;
+    }
+  });
+
+  document
+    .querySelector(`#work-${largestId.toString()}`)
+    .scrollIntoView({ behavior: 'smooth' });
+}
 /*
 // fonction pour generer les travaux dans la modal
 */
 function worksModal() {
-  let displayWorksModal = document.querySelector('.gallery-modal');
-  works.forEach((work) => {
-    // creation des elements html
-    let newdiv = document.createElement('div');
-    let addImage = document.createElement('img');
-    let trashIcon = document.createElement('i');
-    // affectation de valeurs pour les elements créé
-    newdiv.setAttribute('category', work.category.name);
-    newdiv.setAttribute('work', work.id);
-    newdiv.classList.add('img-div');
-    addImage.src = work.imageUrl;
-    trashIcon.classList.add('fa-solid', 'fa-trash-can', 'fa-sm');
-    // on ajoute l'image  notre balise div
-    newdiv.appendChild(addImage);
-    newdiv.appendChild(trashIcon);
-    // puis on ajoute notre div dans notre displayWorksModal
-    displayWorksModal.appendChild(newdiv);
+  let worksData;
+  fetch('http://localhost:5678/api/works')
+    .then((response) => response.json())
+    .then((data) => {
+      worksData = data;
+      let displayWorksModal = document.querySelector('.gallery-modal');
+      worksData.forEach((work) => {
+        // creation des elements html
+        let newdiv = document.createElement('div');
+        let addImage = document.createElement('img');
+        let trashIcon = document.createElement('i');
+        // affectation de valeurs pour les elements créé
+        newdiv.setAttribute('category', work.category.name);
+        newdiv.setAttribute('work', work.id);
+        newdiv.classList.add('img-div');
+        addImage.src = work.imageUrl;
+        trashIcon.classList.add('fa-solid', 'fa-trash-can', 'fa-sm');
+        // on ajoute l'image  notre balise div
+        newdiv.appendChild(addImage);
+        newdiv.appendChild(trashIcon);
+        // puis on ajoute notre div dans notre displayWorksModal
+        displayWorksModal.appendChild(newdiv);
 
-    trashIcon.addEventListener('click', function (e) {
-      let itemToDelete = e.target.parentElement.attributes[1].value;
-      deleteWorks(itemToDelete);
+        trashIcon.addEventListener('click', function (e) {
+          let itemToDelete = e.target.parentElement.attributes[1].value;
+          deleteWorks(itemToDelete);
+        });
+      });
+    })
+    .catch(() => {
+      console.log('error new works');
     });
-  });
 }
 //
 function reInsertWorksModal() {
@@ -374,34 +507,31 @@ function reInsertWorksModal() {
 }
 
 // la fonction qui est responsable de supprimer les travaux
-async function deleteWorks(workNumber) {
+function deleteWorks(workNumber) {
   const token = localStorage.getItem('token');
-  try {
-    const response = await fetch(
-      `http://localhost:5678/api/works/${workNumber}`,
-      {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
 
-    if (response.ok) {
-      works = works.filter((work) => work.id !== parseInt(workNumber));
-      reInsertWorksModal();
-      insertWork(works);
-    } else {
+  fetch(`http://localhost:5678/api/works/${workNumber}`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+  })
+    .then((response) => {
+      if (response.ok) {
+        newWorksDisplayDelete();
+        reInsertWorksModal();
+      } else {
+        let errorMessage = document.querySelector('.error-message-modal');
+        errorMessage.innerText = 'Erreur de suppression';
+        errorMessage.style.visibility = 'visible';
+      }
+    })
+    .catch(() => {
       let errorMessage = document.querySelector('.error-message-modal');
-      errorMessage.innerText = 'Erreur de suppression';
+      errorMessage.innerText = 'Erreur de suppression Network';
       errorMessage.style.visibility = 'visible';
-    }
-  } catch (error) {
-    let errorMessage = document.querySelector('.error-message-modal');
-    errorMessage.innerText = 'Erreur de suppression';
-    errorMessage.style.visibility = 'visible';
-  }
+    });
 }
 
 // la fonction de logout qui supprime le token etc
