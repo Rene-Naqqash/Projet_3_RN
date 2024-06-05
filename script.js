@@ -9,9 +9,7 @@ let filters = document.querySelector('#filters');
 //  je fais appel à l'api avec "fetch"
 function getWorks() {
   fetch('http://localhost:5678/api/works')
-    .then((response) => response.json()) // cette ligne prend/récupérer les données qu'on a demandé au serveur et elle les stock dans (response) puis avec la fonction fléchée elle convertit les données en format JSON avec la méthode .json()
-
-    // ici une fois qu'on a résolu la première promesse qui a récupéré les données et les a convertis en JSON, et bien on va prendre les données JSON qu'on a appelé (data) et on va les mettre dans notre variable works. puis on va appeler notre fonction insertWork() et on va lui donnéer comme paramètre tout ce qu'on a récupéré et traiter (convertit en JSON) de la part du serveur et affecté à works donc ça donne insertWork(works)
+    .then((response) => response.json())
     .then((data) => {
       works = data;
       insertWork(works);
@@ -22,7 +20,6 @@ function getWorks() {
         getCategories();
       }
     })
-    // ici c'est une méthode des promesses qui est appelée lorsque la promesse est rejetée. Elle prend une fonction comme argument, qui est exécutée en cas d'erreur. donc si les promesses précédents n'ont pas été résolus donc ils ont été rejeté et bien on va afficher le type d'erreur dans la console
     .catch(() => {
       console.log('Erreur de connexion');
     });
