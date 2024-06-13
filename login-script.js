@@ -1,48 +1,62 @@
 document.addEventListener('DOMContentLoaded', function () {
   const loginForm = document.querySelector('#login-form-container');
 
-  loginForm.addEventListener('submit', async (event) => {
+  const emailInput = document.querySelector('#userEmail');
+
+  // Add input event listener for real-time email validation
+  emailInput.addEventListener('input', function () {
+    const email = emailInput.value.trim();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (email === '') {
+      emailInput.setCustomValidity('Veuillez entrer une adresse e-mail.');
+    } else if (!emailRegex.test(email)) {
+      emailInput.setCustomValidity(
+        'Veuillez entrer une adresse e-mail valide.'
+      );
+    } else {
+      emailInput.setCustomValidity('');
+    }
+  });
+
+  loginForm.addEventListener('submit', function (event) {
     event.preventDefault();
 
-    const email = document.querySelector('#userEmail').value;
+    const email = emailInput.value;
     const password = document.querySelector('#userPassword').value;
 
-    try {
-      const response = await fetch('http://localhost:5678/api/users/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        localStorage.setItem('token', data.token);
-        window.location.href = '/Projet_3_RN/index.html';
-      } else {
-        switch (response.status) {
-          case 401:
-            displayError(
-              'Email ou mot de passe incorrect. Veuillez réessayer.'
-            );
-            break;
-          case 404:
-            displayError(
-              'Email ou mot de passe incorrect. Veuillez   réessayer.'
-            );
-            break;
-          default:
-            displayError(
-              'Une erreur est survenue. Veuillez réessayer plus tard.'
-            );
-            break;
+    fetch('http://localhost:5678/api/users/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, password }),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          switch (response.status) {
+            case 401:
+            case 404:
+              displayError(
+                'Email ou mot de passe incorrect. Veuillez   réessayer.'
+              );
+              break;
+            default:
+              displayError(
+                'Une erreur est survenue. Veuillez réessayer plus tard.'
+              );
+              break;
+          }
         }
-      }
-    } catch (error) {
-      displayError();
-    }
+        return response.json();
+      })
+      .then((data) => {
+        localStorage.setItem('token', data.token);
+        window.location.href = 'index.html';
+      })
+      .catch(() => {
+        displayError('Error de NetWork');
+      });
   });
 
   function displayError(message) {

@@ -432,7 +432,7 @@ nav img {
   margin-right: 10px;
 }
 
-/***** Bouton et text Mode édition à droite de Mes Projets *****/
+/***** Bouton et text Mode édition à droite de "Mes Projets" *****/
 .edit-container {
   display: flex;
   justify-content: center;
