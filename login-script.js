@@ -1,9 +1,11 @@
+/** @format */
+
 document.addEventListener('DOMContentLoaded', function () {
   const loginForm = document.querySelector('#login-form-container');
 
   const emailInput = document.querySelector('#userEmail');
 
-  // Add input event listener for real-time email validation
+  // je verifie le input des mail en temps réel
   emailInput.addEventListener('input', function () {
     const email = emailInput.value.trim();
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -33,9 +35,15 @@ document.addEventListener('DOMContentLoaded', function () {
       body: JSON.stringify({ email, password }),
     })
       .then((response) => {
-        if (!response.ok) {
+        if (response.ok) {
+          return response.json();
+        } else {
           switch (response.status) {
             case 401:
+              displayError(
+                'Email ou mot de passe incorrect. Veuillez   réessayer.'
+              );
+              break;
             case 404:
               displayError(
                 'Email ou mot de passe incorrect. Veuillez   réessayer.'
@@ -48,15 +56,12 @@ document.addEventListener('DOMContentLoaded', function () {
               break;
           }
         }
-        return response.json();
       })
       .then((data) => {
         localStorage.setItem('token', data.token);
         window.location.href = 'index.html';
       })
-      .catch(() => {
-        displayError('Error de NetWork');
-      });
+      .catch(() => {});
   });
 
   function displayError(message) {

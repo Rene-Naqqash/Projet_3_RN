@@ -1,11 +1,11 @@
+/** @format */
+
 // ******** Mon script ********
 let gallery = document.querySelector('.gallery');
 let works;
 let categories;
 let newWorks;
 let filters = document.querySelector('#filters');
-let chooseCategoryParent;
-let fileInput;
 
 //  je fais appel à l'api avec "fetch"
 function getWorks() {
@@ -137,7 +137,6 @@ function loggedIn() {
   worksModal(works);
 }
 
-// la fonction qui permet d'ouvrir la modal
 function openModal() {
   let modal = null;
   let linksModal = document.querySelectorAll('.js-modal');
@@ -169,206 +168,6 @@ function openModal() {
   // j'ajoute un ecouteur d'evenement à mon btn "Ajouter une Photo"
   let addPhotoButton = document.querySelector('#btn-add');
   addPhotoButton.addEventListener('click', modalAddPhoto);
-  /* 
-  // la fonction pour ajouter des travaux par l'admin
-  */
-  function modalAddPhoto() {
-    // afficher la fleche de retour
-    let backArrow = document.querySelector('#btn-return-modal');
-    backArrow.style.visibility = 'visible';
-    backArrow.addEventListener('click', returnModalGallery);
-    // effacer mon innerHTML de ma div parent de gallery-modal
-    let parentGalleryModal = document.querySelector('.modal-div-flex');
-    parentGalleryModal.innerHTML = '';
-    parentGalleryModal.innerHTML = `<p class="title-modal">Ajout photo</p> <form class="form" id="form"><div class="div-add-photo"> <div id="div-preview"> </div> <div class="toRemove"> <i class="fa-regular fa-image fa-5x"></i> <button id="btnAjouterPhoto"> + Ajouter photo </button> <p>jpg, png : 4mo max</p></div> <input  id="file" type="file"  style="display: none;"> </div> 
-    <div class="inputDiv">
-    <p class="titleP">Titre</p>
-    <input type="text" id="title-work" name="title" size="10" />
-    <p class="categoryP">Catégorie</p>
-    <select name="category" id="category-selection">
-      <option value="0" >--Sélectionnez une Catégorie--</option>
-     </select> <p id="pEmpty"></p> <p id="error-message-add-photo" class="color-error" style="visibility: hidden">Erreur d'ajout</p> <button type="submit" id="btn-valider">Valider</button> </div> </form> `;
-    // cette function affiche l'option des category dynamiquement dans la modal d'ajout photo
-    let chooseCategoryParent = document.querySelector('#category-selection');
-    let fileInput = document.querySelector('#file');
-    function selectCategory() {
-      categories.forEach((category) => {
-        optionSelect(category.id, category.name);
-      });
-      // function pour creer chaque option pour la balise select
-    }
-    function optionSelect(categoryId, categoryName) {
-      let optionElement = document.createElement('option');
-      optionElement.value = categoryId;
-      optionElement.setAttribute('name', `option-${categoryId}`);
-      optionElement.textContent = categoryName;
-      chooseCategoryParent.appendChild(optionElement);
-    }
-    selectCategory();
-
-    //  pour ajouter une img
-    let btnAjouter = document.querySelector('#btnAjouterPhoto');
-    btnAjouter.addEventListener('click', function (e) {
-      e.preventDefault();
-      document.querySelector('#file').click();
-    });
-
-    fileInput.addEventListener('change', function (event) {
-      const file = event.target.files[0];
-      let maxSize = 4194304;
-      // pour vérifie la taille du fichier et si le type est bien en png ou en jpeg
-      if (
-        file &&
-        (file.size > maxSize ||
-          !(file.type === 'image/png' || file.type === 'image/jpeg'))
-      ) {
-        displayMessageError(
-          '#error-message-add-photo',
-          'Veuillez choisir une image (jpg, png) qui ne dépasse pas 4 Mo.'
-        );
-        return;
-      } else {
-        hideMessageError('#error-message-add-photo');
-      }
-      if (file && (file.type === 'image/png' || file.type === 'image/jpeg')) {
-        const reader = new FileReader();
-        reader.onload = function (e) {
-          let divPreview = document.querySelector('#div-preview');
-          let img = document.createElement('img');
-          img.setAttribute('id', 'file-preview');
-          img.setAttribute('alt', "Aperçu de l'image");
-          img.src = e.target.result;
-          divPreview.innerHTML = '';
-          divPreview.appendChild(img);
-          let toRemove = document.querySelector('.toRemove');
-          if (toRemove) {
-            toRemove.remove();
-          }
-        };
-        reader.readAsDataURL(file);
-      }
-    });
-
-    let formSubmit = document.querySelector('#form');
-    formSubmit.addEventListener('submit', handleForm);
-    function handleForm(e) {
-      e.preventDefault();
-
-      let categoryValue = chooseCategoryParent.value;
-      let categoryValueInt = parseInt(chooseCategoryParent.value);
-      let titleValue = document.querySelector('#title-work').value.trim();
-      let file = fileInput.files[0];
-
-      let categoryName = document.querySelector('#category-selection')
-        .selectedOptions[0].textContent;
-
-      // Vérifier si les conditions sont remplies
-      if (categoryValue === '0' || titleValue.trim() === '' || !file) {
-        displayMessageError(
-          '#error-message-add-photo',
-          'Veuillez remplir tous les champs correctement et ajouter une photo (png ou jpeg) 4Mo max.'
-        );
-        return;
-      }
-      let imageUrl = URL.createObjectURL(file);
-      let myFormData = new FormData(formSubmit);
-      myFormData.append('image', file);
-
-      const token = localStorage.getItem('token');
-      fetch('http://localhost:5678/api/works', {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
-        body: myFormData,
-      })
-        .then((response) => {
-          if (response.ok) {
-            addWorkLocally(
-              titleValue,
-              imageUrl,
-              categoryValueInt,
-              categoryName
-            );
-
-            insertWork(works);
-
-            findLatestFigure();
-
-            document.querySelector('.js-modal-btn-close').click();
-          } else {
-            displayMessageError(
-              '#error-message-add-photo',
-              "une erreur d'ajout s'est produit."
-            );
-          }
-        })
-        .catch(() => {
-          displayMessageError(
-            '#error-message-add-photo',
-            'nous rencontrons une erreur de connexion'
-          );
-        });
-    }
-    // pour verifier les validité des inputs de la form et puis changer la couleur de mon button
-    let submitButton = document.querySelector('#btn-valider');
-
-    chooseCategoryParent.addEventListener('change', checkFormValidity);
-    document
-      .querySelector('#title-work')
-      .addEventListener('input', checkFormValidity);
-    fileInput.addEventListener('change', checkFormValidity);
-
-    // fonction verif pour les couleur de mon btn
-    function checkFormValidity() {
-      let categoryValue = chooseCategoryParent.value;
-      let titleValue = document.querySelector('#title-work').value;
-      let file = fileInput.files[0];
-
-      // si ces conditions son bons je vais pouvoir activer mon bouton submit
-      let isValid = categoryValue !== '0' && titleValue.trim() !== '' && file;
-
-      // pour changer la couleur de mon btn submit en vert si les conditions sont validé
-      if (isValid) {
-        submitButton.classList.add('active');
-      } else {
-        submitButton.classList.remove('active');
-      }
-    }
-  }
-
-  function returnModalGallery() {
-    // cacher la fleche de retour
-    let backArrow = document.querySelector('#btn-return-modal');
-    backArrow.style.visibility = 'hidden';
-    // recreation de mon innerHTML dans ma div parent
-    let parentGalleryModal = document.querySelector('.modal-div-flex');
-    // SI la div est vide je remplit la div
-    if (parentGalleryModal && parentGalleryModal.innerHTML.trim() === '') {
-      parentGalleryModal.innerHTML =
-        '<p class="title-modal">Galerie photo</p><div class="gallery-modal"></div><p class="error-message-modal" style="visibility: hidden">Erreur suppression</p><button id="btn-add">Ajouter une photo</button>';
-
-      worksModal(works);
-    }
-    // sinon si y a déjà autre choses dans ma div et bien je nettois la div et je vais ajouter mon html de la gallery après le nettoyage
-    else {
-      // je declare ma div "gallery-modal"
-      let galleryModal = document.querySelector('.gallery-modal');
-      // si la div gallery-modal est presente ET elle est vide
-      if (galleryModal && galleryModal.innerHTML.trim() === '') {
-        worksModal(works);
-      }
-      // sinon je la vide et je la remplis du html voulu
-      else {
-        parentGalleryModal.innerHTML = '';
-        parentGalleryModal.innerHTML =
-          '<p class="title-modal">Galerie photo</p><div class="gallery-modal"></div><p class="error-message-modal" style="visibility: hidden">Erreur suppression</p><button id="btn-add">Ajouter une photo</button>';
-
-        worksModal(works);
-      }
-    }
-    // j'ajoute un ecouteur d'evenement à mon btn "Ajouter une Photo"
-    let addPhotoButton = document.querySelector('#btn-add');
-    addPhotoButton.addEventListener('click', modalAddPhoto);
-  }
 
   function closeModal(e) {
     if (modal === null) return;
@@ -392,6 +191,7 @@ function openModal() {
     }
     returnModalGallery();
   }
+
   // pour bloquer la propagation qui vient de l'element parent qui est le aside "modal"
   function stopPropagation(e) {
     e.stopPropagation();
@@ -401,6 +201,210 @@ function openModal() {
       closeModal(e);
     }
   });
+}
+
+/* 
+  // la fonction pour ajouter des travaux par l'admin
+  */
+function modalAddPhoto() {
+  // afficher la fleche de retour
+  let backArrow = document.querySelector('#btn-return-modal');
+  backArrow.style.visibility = 'visible';
+  backArrow.addEventListener('click', returnModalGallery);
+  // effacer mon innerHTML de ma div parent de gallery-modal
+  let parentGalleryModal = document.querySelector('.modal-div-flex');
+  parentGalleryModal.innerHTML = '';
+  parentGalleryModal.innerHTML = `<p class="title-modal">Ajout photo</p> <form class="form" id="form"><div class="div-add-photo"> <div id="div-preview"> </div> <div class="toRemove"> <i class="fa-regular fa-image fa-5x"></i> <button id="btnAjouterPhoto"> + Ajouter photo </button> <p>jpg, png : 4mo max</p></div> <input  id="file" type="file"  style="display: none;"> </div> 
+    <div class="inputDiv">
+    <p class="titleP">Titre</p>
+    <input type="text" id="title-work" name="title" size="10" />
+    <p class="categoryP">Catégorie</p>
+    <select name="category" id="category-selection">
+      <option value="0" >--Sélectionnez une Catégorie--</option>
+     </select> <p id="pEmpty"></p> <p id="error-message-add-photo" class="color-error" style="visibility: hidden">Erreur d'ajout</p> <button type="submit" id="btn-valider">Valider</button> </div> </form> `;
+  let chooseCategoryParent = document.querySelector('#category-selection');
+  let fileInput = document.querySelector('#file');
+  // cette function affiche l'option des category dynamiquement dans la modal d'ajout photo
+  selectCategory();
+  //  pour ajouter une img
+  let btnAjouter = document.querySelector('#btnAjouterPhoto');
+  btnAjouter.addEventListener('click', function (e) {
+    e.preventDefault();
+    document.querySelector('#file').click();
+  });
+  fileInput.addEventListener('change', function (event) {
+    const file = event.target.files[0];
+    let maxSize = 4194304;
+    // pour vérifie la taille du fichier et si le type est bien en png ou en jpeg
+    if (
+      file &&
+      (file.size > maxSize ||
+        !(file.type === 'image/png' || file.type === 'image/jpeg'))
+    ) {
+      displayMessageError(
+        '#error-message-add-photo',
+        'Veuillez choisir une image (jpg, png) qui ne dépasse pas 4 Mo.'
+      );
+      return;
+    } else {
+      hideMessageError('#error-message-add-photo');
+    }
+    if (file && (file.type === 'image/png' || file.type === 'image/jpeg')) {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        let divPreview = document.querySelector('#div-preview');
+        let img = document.createElement('img');
+        img.setAttribute('id', 'file-preview');
+        img.setAttribute('alt', "Aperçu de l'image");
+        img.src = e.target.result;
+        divPreview.innerHTML = '';
+        divPreview.appendChild(img);
+        let toRemove = document.querySelector('.toRemove');
+        if (toRemove) {
+          toRemove.remove();
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+  submittingFiles();
+  messagesGestionAddPhotoModal();
+}
+function selectCategory() {
+  categories.forEach((category) => {
+    optionSelect(category.id, category.name);
+  });
+}
+// function pour creer chaque option pour la balise select
+function optionSelect(categoryId, categoryName) {
+  let chooseCategoryParent = document.querySelector('#category-selection');
+  let optionElement = document.createElement('option');
+  optionElement.value = categoryId;
+  optionElement.setAttribute('name', `option-${categoryId}`);
+  optionElement.textContent = categoryName;
+  chooseCategoryParent.appendChild(optionElement);
+}
+
+function submittingFiles() {
+  let fileInput = document.querySelector('#file');
+  let chooseCategoryParent = document.querySelector('#category-selection');
+  let formSubmit = document.querySelector('#form');
+  formSubmit.addEventListener('submit', handleForm);
+  function handleForm(e) {
+    e.preventDefault();
+
+    let categoryValue = chooseCategoryParent.value;
+    let categoryValueInt = parseInt(chooseCategoryParent.value);
+    let titleValue = document.querySelector('#title-work').value.trim();
+    let file = fileInput.files[0];
+
+    let categoryName = document.querySelector('#category-selection')
+      .selectedOptions[0].textContent;
+
+    // Vérifier si les conditions sont remplies
+    if (categoryValue === '0' || titleValue.trim() === '' || !file) {
+      displayMessageError(
+        '#error-message-add-photo',
+        'Veuillez remplir tous les champs correctement et ajouter une photo (png ou jpeg) 4Mo max.'
+      );
+      return;
+    }
+    let imageUrl = URL.createObjectURL(file);
+    let myFormData = new FormData(formSubmit);
+    myFormData.append('image', file);
+
+    const token = localStorage.getItem('token');
+    fetch('http://localhost:5678/api/works', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` },
+      body: myFormData,
+    })
+      .then((response) => {
+        if (response.ok) {
+          addWorkLocally(titleValue, imageUrl, categoryValueInt, categoryName);
+
+          insertWork(works);
+
+          findLatestFigure();
+
+          document.querySelector('.js-modal-btn-close').click();
+        } else {
+          displayMessageError(
+            '#error-message-add-photo',
+            "une erreur d'ajout s'est produit."
+          );
+        }
+      })
+      .catch(() => {
+        displayMessageError(
+          '#error-message-add-photo',
+          'nous rencontrons une erreur de connexion'
+        );
+      });
+  }
+}
+
+function messagesGestionAddPhotoModal() {
+  let submitButton = document.querySelector('#btn-valider');
+  let fileInput = document.querySelector('#file');
+  let chooseCategoryParent = document.querySelector('#category-selection');
+  chooseCategoryParent.addEventListener('change', checkFormValidity);
+  document
+    .querySelector('#title-work')
+    .addEventListener('input', checkFormValidity);
+  fileInput.addEventListener('change', checkFormValidity);
+
+  // fonction verif pour les couleur de mon btn
+  function checkFormValidity() {
+    let categoryValue = chooseCategoryParent.value;
+    let titleValue = document.querySelector('#title-work').value;
+    let file = fileInput.files[0];
+
+    // si ces conditions son bons je vais pouvoir activer mon bouton submit
+    let isValid = categoryValue !== '0' && titleValue.trim() !== '' && file;
+
+    // pour changer la couleur de mon btn submit en vert si les conditions sont validé
+    if (isValid) {
+      submitButton.classList.add('active');
+    } else {
+      submitButton.classList.remove('active');
+    }
+  }
+}
+
+function returnModalGallery() {
+  // cacher la fleche de retour
+  let backArrow = document.querySelector('#btn-return-modal');
+  backArrow.style.visibility = 'hidden';
+  // recreation de mon innerHTML dans ma div parent
+  let parentGalleryModal = document.querySelector('.modal-div-flex');
+  // SI la div est vide je remplit la div
+  if (parentGalleryModal && parentGalleryModal.innerHTML.trim() === '') {
+    parentGalleryModal.innerHTML =
+      '<p class="title-modal">Galerie photo</p><div class="gallery-modal"></div><p class="error-message-modal" style="visibility: hidden">Erreur suppression</p><button id="btn-add">Ajouter une photo</button>';
+
+    worksModal(works);
+  }
+  // sinon si y a déjà autre choses dans ma div et bien je nettois la div et je vais ajouter mon html de la gallery après le nettoyage
+  else {
+    // je declare ma div "gallery-modal"
+    let galleryModal = document.querySelector('.gallery-modal');
+    // si la div gallery-modal est presente ET elle est vide
+    if (galleryModal && galleryModal.innerHTML.trim() === '') {
+      worksModal(works);
+    }
+    // sinon je la vide et je la remplis du html voulu
+    else {
+      parentGalleryModal.innerHTML = '';
+      parentGalleryModal.innerHTML =
+        '<p class="title-modal">Galerie photo</p><div class="gallery-modal"></div><p class="error-message-modal" style="visibility: hidden">Erreur suppression</p><button id="btn-add">Ajouter une photo</button>';
+
+      worksModal(works);
+    }
+  }
+  // j'ajoute un ecouteur d'evenement à mon btn "Ajouter une Photo"
+  let addPhotoButton = document.querySelector('#btn-add');
+  addPhotoButton.addEventListener('click', modalAddPhoto);
 }
 
 // fonction pour trouver le tableau le plus recent
@@ -452,6 +456,7 @@ function addWorkLocally(title, imageUrl, categoryId, categoryName) {
 */
 function worksModal(worksArr) {
   let displayWorksModal = document.querySelector('.gallery-modal');
+  //console.log(worksArr); //!!!
   worksArr.forEach((work) => {
     // creation des elements html
     let newdiv = document.createElement('div');
@@ -471,6 +476,7 @@ function worksModal(worksArr) {
 
     trashIcon.addEventListener('click', function (e) {
       let itemToDelete = e.target.parentElement.attributes[1].value;
+      //console.log(itemToDelete); //!!!
       deleteWorks(itemToDelete);
     });
   });
@@ -494,6 +500,7 @@ function deleteWorks(workNumber) {
     },
   })
     .then((response) => {
+      // console.log(response.status); //!!!
       if (response.ok) {
         works = works.filter((work) => work.id !== parseInt(workNumber));
         reInsertWorksModal();
