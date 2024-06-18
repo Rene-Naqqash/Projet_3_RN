@@ -1,3 +1,5 @@
+<!-- @format -->
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -8,7 +10,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Work+Sans&display=swap"
-      rel="stylesheet" />
+      rel="stylesheet"
+    />
     <meta name="description" content="" />
     <link rel="stylesheet" href="./assets/style.css" />
     <script src="login-script.js"></script>
@@ -21,28 +24,27 @@
       </a>
       <nav>
         <ul>
-          <a href="#">
-            <li>projets</li>
-          </a>
-          <a href="#">
-            <li>contact</li>
-          </a>
-          <a href="login.html">
-            <li>login</li>
-          </a>
-          <a href="#">
-            <li><img src="./assets/icons/instagram.png" alt="Instagram" /></li>
-          </a>
+          <li><a href="#">projets</a></li>
+
+          <li><a href="#">contact</a></li>
+
+          <li><a href="login.html">login</a></li>
+
+          <li>
+            <a href="#"
+              ><img src="./assets/icons/instagram.png" alt="Instagram"
+            /></a>
+          </li>
         </ul>
       </nav>
     </header>
     <section id="login-section">
       <h2 id="login-title">Log In</h2>
 
-      <form id="login-form-container" action="">
-        <label for="email">E-mail</label>
+      <form id="login-form-container">
+        <label for="userEmail">E-mail</label>
         <input type="email" name="email" id="userEmail" required />
-        <label for="password">Mot de passe</label>
+        <label for="userPassword">Mot de passe</label>
         <input type="password" name="password" id="userPassword" required />
         <!-- pour afficher mon message d'erreur -->
         <p id="errorMessage" class="color-error" style="visibility: hidden"></p>

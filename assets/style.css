@@ -144,8 +144,7 @@ body {
   margin: auto;
   font-family: 'Work Sans';
   font-size: 14px;
-  /* rn modif */
-  overflow-x: hidden; /* Hide horizontal overflow */
+  overflow-x: hidden;
 }
 
 header {

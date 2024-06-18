@@ -21,7 +21,7 @@ function getWorks() {
     });
 }
 
-// dans notre fonction insertWork() elle prend comme paramètre les données qu'on lui a envoyé en format JSON
+// dans notre fonction insertWork() elle prend comme paramètre les données qu'on lui a envoyé en format JSON depuis le fetch
 function insertWork(data) {
   // ici on dit de vider le contenue de la classe gallery pour pouvoir ensuite afficher le contenue reçu de la part de notre serveur et puis l'afficher dynamiquement
   gallery.innerHTML = '';
@@ -122,7 +122,7 @@ function loggedIn() {
   divModifier.appendChild(divRightChildren);
 
   // target login <li> et changer son text
-  let liLogin = document.querySelector('#li-login');
+  let liLogin = document.querySelector('#a-login-logout');
   liLogin.innerText = 'logout';
 
   let loginLink = document.querySelector('#a-login-logout');
@@ -203,9 +203,7 @@ function openModal() {
   });
 }
 
-/* 
-  // la fonction pour ajouter des travaux par l'admin
-  */
+// la fonction pour ajouter des travaux par l'admin
 function modalAddPhoto() {
   // afficher la fleche de retour
   let backArrow = document.querySelector('#btn-return-modal');
@@ -407,7 +405,7 @@ function returnModalGallery() {
   addPhotoButton.addEventListener('click', modalAddPhoto);
 }
 
-// fonction pour trouver le tableau le plus recent
+// fonction pour trouver le tableau le plus recent et l'afficher sur l'ecran
 function findLatestFigure() {
   const figures = document.querySelectorAll('.gallery figure');
   let largestId = 0;
@@ -520,7 +518,7 @@ function deleteWorks(workNumber) {
 
 // la fonction de logout qui supprime le token etc
 function logout() {
-  let loginLogout = document.querySelector('#li-login');
+  let loginLogout = document.querySelector('#a-login-logout');
   if (loginLogout.innerText === 'logout') {
     localStorage.removeItem('token');
     window.location.href = 'index.html';
