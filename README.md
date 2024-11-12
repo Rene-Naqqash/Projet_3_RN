@@ -1,4 +1,4 @@
-#Projet 3 - Portfolio Sophie Bluel
+# Projet 3 - Portfolio Sophie Bluel
 Le site portfolio de Sophie Bluel est une vitrine interactive qui valorise ses projets d'architecture d'intérieur via une interface élégante et intuitive.
 
 Pour développer cette galerie de travaux, j'ai utilisé JavaScript vanilla et l'API Fetch, permettant de récupérer et d'afficher les données des projets en temps réel. Les utilisateurs peuvent parcourir les projets par catégories grâce à un système de filtrage dynamique.
